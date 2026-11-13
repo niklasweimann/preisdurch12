@@ -17,6 +17,16 @@ const HTML = `<!doctype html>
   .hero div { max-width:960px; margin:0 auto; }
   h1 { font-size:clamp(.95rem,3.8vw,3.4rem); line-height:1.1; font-weight:500; margin:0 0 14px; white-space:nowrap; }
   .hero p { margin:0; font-size:1.15rem; opacity:.8; }
+  .big { display:none; }
+  body.link header { display:none; }
+  body.link .hero { min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:32px 16px; }
+  body.link.checked .hero { min-height:0; padding:48px 16px 96px; }
+  body.link h1 { white-space:normal; font-size:clamp(2.2rem,8vw,5.5rem); margin-bottom:24px; }
+  body.link .hero p { margin:0 auto; font-size:clamp(1.1rem,3vw,1.5rem); }
+  body.link .big { display:inline-block; width:auto; margin-top:44px; padding:20px 40px; font-size:clamp(1.2rem,4vw,1.7rem); background:var(--blue); color:#fff; box-shadow:0 8px 24px rgba(0,0,0,.3); }
+  body.link .big:hover { background:var(--blue-dark); }
+  body.link.checked .big { display:none; }
+  body.link:not(.checked) main { display:none; }
   main { max-width:560px; margin:-56px auto 48px; padding:0 16px; position:relative; z-index:1; }
   .card { background:#fff; border:1px solid var(--line); border-radius:8px; padding:28px; box-shadow:0 8px 24px rgba(6,36,101,.10); }
   label { display:block; font-weight:500; margin-bottom:8px; }
@@ -71,6 +81,7 @@ const HTML = `<!doctype html>
 <section class="hero"><div>
   <h1>Ist der Preis <span id="hprice"></span>durch 12 teilbar?</h1>
   <p>Bevor der Vertrag rausgeht: kurz prüfen, damit die Abrechnung nicht stolpert.</p>
+  <button class="big" id="bigcheck">Jetzt lieber prüfen</button>
 </div></section>
 <main><div class="card">
   <label for="price">Vertragspreis in Euro</label>
@@ -185,6 +196,7 @@ const HTML = `<!doctype html>
   }
 
   function check() {
+    document.body.classList.add('checked');
     var p = parse(input.value);
     if (!p) { msg.textContent = 'Bitte einen Betrag eingeben, z. B. 1234,56'; return; }
     msg.className = 'res';
@@ -206,6 +218,7 @@ const HTML = `<!doctype html>
   }
 
   $('check').addEventListener('click', check);
+  $('bigcheck').addEventListener('click', check);
   input.addEventListener('keydown', function (e) { if (e.key === 'Enter') check(); });
   $('dismiss').addEventListener('click', hideAll);
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideAll(); });
@@ -220,7 +233,7 @@ const HTML = `<!doctype html>
   });
 
   var pre = new URLSearchParams(location.search).get('preis');
-  if (pre) { input.value = pre; syncTitle(); $('check').focus(); } else { input.focus(); }
+  if (pre) { document.body.classList.add('link'); input.value = pre; syncTitle(); $('bigcheck').focus(); } else { input.focus(); }
 })();
 </script>
 </body>
